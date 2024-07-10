@@ -1,3 +1,6 @@
+import {cart} from '../data/cart.js';
+import {products} from '../data/products.js';
+
 let productHTML = '';
 products.forEach((product) => {
     productHTML += `
@@ -24,7 +27,7 @@ products.forEach((product) => {
           </div>
 
           <div class="product-quantity-container">
-            <select>
+            <select class ="js-quatity-selector-${product.id}">
               <option selected value="1">1</option>
               <option value="2">2</option>
               <option value="3">3</option>
@@ -40,7 +43,7 @@ products.forEach((product) => {
 
           <div class="product-spacer"></div>
 
-          <div class="added-to-cart">
+          <div class="added-to-cart added-to-cart-${product.id}">
             <img src="images/icons/checkmark.png">
             Added
           </div>
@@ -54,6 +57,9 @@ products.forEach((product) => {
 // add data from data/product.js into html code to display on page
 document.querySelector('.js-product-grid').innerHTML = productHTML;
 
+let cartQuatity = 0;
+let timeOutId;
+let isTimeOutRunning = false;
 document.querySelectorAll('.js-add-to-cart').forEach( (button) => {
   button.addEventListener('click', () => {
     // add product into cart
@@ -74,12 +80,27 @@ document.querySelectorAll('.js-add-to-cart').forEach( (button) => {
     }
 
     // calculate total cart quantity
-    let cartQuatity = 0;
-    cart.forEach((product) => {
-        cartQuatity += product.quality;
-    })
+    const selectorElement = document.querySelector(`.js-quatity-selector-${productId}`);
+    const selectedValue = Number(selectorElement.value);
+    cartQuatity += selectedValue;
     document.querySelector('.js-cart-quantity').innerHTML = cartQuatity;
     console.log(cart);
 
+
+    const addedElement = document.querySelector(`.added-to-cart-${productId}`);
+   
+    addedElement.classList.add('js-added-to-cart');
+    if(!isTimeOutRunning) {
+      timeOutId = setTimeout(() => {
+        addedElement.classList.remove('js-added-to-cart');
+      },1000);
+      isTimeOutRunning = true;
+    } else {
+      clearInterval(timeOutId); // if timeout is running then clear the rest of time and run timeout again with interval with 2s 
+      timeOutId = setTimeout(() => {
+        addedElement.classList.remove('js-added-to-cart');
+      },1000);
+      isTimeOutRunning = true;
+    }
   })
 })
