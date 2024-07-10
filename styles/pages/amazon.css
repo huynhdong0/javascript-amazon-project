@@ -144,13 +144,14 @@
   opacity: 0;
 }
 
+.js-added-to-cart {
+  /* make it visiable by opacity is 1 when u click add to cart button */
+  opacity: 1;
+}
+
 .added-to-cart img {
   height: 20px;
   margin-right: 5px;
-}
-
-.js-added-to-cart {
-  opacity: 1;
 }
 
 .add-to-cart-button {

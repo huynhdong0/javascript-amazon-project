@@ -2,6 +2,7 @@ import {cart} from '../data/cart.js';
 import {products} from '../data/products.js';
 
 let productHTML = '';
+// load data
 products.forEach((product) => {
     productHTML += `
      <div class="product-container">
@@ -54,17 +55,18 @@ products.forEach((product) => {
           </button>
         </div>`
 });
+
 // add data from data/product.js into html code to display on page
 document.querySelector('.js-product-grid').innerHTML = productHTML;
 
 let cartQuatity = 0;
 let timeOutId;
 let isTimeOutRunning = false;
-document.querySelectorAll('.js-add-to-cart').forEach( (button) => {
-  button.addEventListener('click', () => {
-    // add product into cart
-    const productId = button.dataset.productId;
-    let matchingItem;
+
+
+// add to cart 
+function addToCart(productId) {
+  let matchingItem;
     cart.forEach((item) => {
       if (productId === item.productId){
         matchingItem = item;
@@ -78,17 +80,19 @@ document.querySelectorAll('.js-add-to-cart').forEach( (button) => {
         quality: 1
       });
     }
+}
 
-    // calculate total cart quantity
+// calculate total cart quantity
+function calculateCartQuantity(productId) {
     const selectorElement = document.querySelector(`.js-quatity-selector-${productId}`);
-    const selectedValue = Number(selectorElement.value);
-    cartQuatity += selectedValue;
+    cartQuatity += Number(selectorElement.value);
     document.querySelector('.js-cart-quantity').innerHTML = cartQuatity;
-    console.log(cart);
+}
 
-
+// control time appear 'added' when u click add to cart
+function controlTimeOut(productId) {
     const addedElement = document.querySelector(`.added-to-cart-${productId}`);
-   
+    
     addedElement.classList.add('js-added-to-cart');
     if(!isTimeOutRunning) {
       timeOutId = setTimeout(() => {
@@ -96,11 +100,26 @@ document.querySelectorAll('.js-add-to-cart').forEach( (button) => {
       },1000);
       isTimeOutRunning = true;
     } else {
-      clearInterval(timeOutId); // if timeout is running then clear the rest of time and run timeout again with interval with 2s 
+      /* if timeout is running then clear the rest of time 
+         and run timeout again with interval with 2s */
+      clearInterval(timeOutId);  
       timeOutId = setTimeout(() => {
         addedElement.classList.remove('js-added-to-cart');
       },1000);
       isTimeOutRunning = true;
     }
+}
+
+// make interactive when u click on buton add to cart
+document.querySelectorAll('.js-add-to-cart').forEach( (button) => {
+  button.addEventListener('click', () => {
+    // get productId of each product for interaction
+    const productId = button.dataset.productId;
+
+    addToCart(productId);
+    calculateCartQuantity(productId);
+    controlTimeOut(productId);
+    
   })
+
 })
