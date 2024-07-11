@@ -59,6 +59,9 @@ productModule.products.forEach((product) => {
 document.querySelector('.js-product-grid').innerHTML = productHTML;
 
 
+// load cart quantity
+cartModule.updateCartQuantity('js-cart-quantity','');
+
 
 // make interactive when u click on buton add to cart
 document.querySelectorAll('.js-add-to-cart').forEach( (button) => {
@@ -66,7 +69,7 @@ document.querySelectorAll('.js-add-to-cart').forEach( (button) => {
     // get productId of each product for interaction
     const productId = button.dataset.productId;
     cartModule.addToCart(productId);
-    cartModule.updateCartQuantity(productId);
+    cartModule.updateCartQuantity('js-cart-quantity','');
     cartModule.controlTimeOut(productId);
   })
 });

@@ -45,10 +45,26 @@ function addNewCartQuatity(productId) {
   return Number(selectorElement.value);
 }
 
-// calculate total cart quantity
-export function updateCartQuantity(productId) {
-    totalCartQuantity += addNewCartQuatity(productId);
-    document.querySelector('.js-cart-quantity').innerHTML = totalCartQuantity;
+// calculate cart quantity 
+export function updateCartQuantity(nameClass, extra) {
+    let cartQuantity = 0;
+    cart.forEach((cartItem) => {
+      cartQuantity += cartItem.quantity;
+    })
+    document.querySelector(`.${nameClass}`).innerHTML = `${cartQuantity} ${extra}`;
+}
+
+// calculate cart quantity for checkout.js
+export function updateQuantity(productId ,newQuantity) {
+    cart.forEach((cartItem) => {
+      if (productId === cartItem.productId){
+        cartItem.quantity = newQuantity;
+        saveToStorage();
+        document.querySelector('.js-quantity-label').innerHTML = cartItem.quantity;
+        updateCartQuantity('js-return-to-home-link','items');
+      }
+    })
+    
 }
 
 // control time appear 'added' when u click add to cart
@@ -76,4 +92,5 @@ export function controlTimeOut(productId) {
 export function removeCartItem(productId) {
   cart = cart.filter(cartItem => cartItem.productId !== productId);
   saveToStorage();
+  updateCartQuantity('js-return-to-home-link','items');
 }
