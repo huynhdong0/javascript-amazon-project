@@ -11,19 +11,9 @@ import * as deliveryOptionModule from '../../data/deliveryOptions.js';
 export function renderOrderSummary() {
     let cartItemContainerHTML = '';
     cartModule.cart.forEach( (cartItem) => {
-        let matchingProduct;
-        productModule.products.forEach( (product) => {
-        if (product.id == cartItem.productId) {
-            matchingProduct = product;
-        }
-        }); 
+        let matchingProduct = productModule.getProduct(cartItem.productId);
 
-        let deliveryOption;
-        deliveryOptionModule.deliveryOptions.forEach( (option) => {
-            if (option.id == cartItem.deliveryOptionId){
-                deliveryOption = option;
-            }
-        });
+        let deliveryOption = deliveryOptionModule.getDeliveryOption(cartItem.deliveryOptionId);
 
         cartItemContainerHTML += `
             <div class="cart-item-container js-cart-item-container-${matchingProduct.id}">
@@ -69,7 +59,7 @@ export function renderOrderSummary() {
                 </div>
             </div>`;
     });
-    document.querySelector('.order-summary').innerHTML = cartItemContainerHTML;
+    document.querySelector('.js-order-summary').innerHTML = cartItemContainerHTML;
 
     cartModule.updateCartQuantity('js-return-to-home-link','items');
 
