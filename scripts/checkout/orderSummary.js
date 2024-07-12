@@ -1,12 +1,9 @@
 import * as cartModule from '../../data/cart.js';
 import * as productModule from '../../data/products.js';
 import * as utilityModule from '../utils/money.js';
-import dayjs from 'https://unpkg.com/dayjs@1.11.10/esm/index.js';
 import * as deliveryOptionModule from '../../data/deliveryOptions.js';
-
-// console.log(dayjs().add(7,'days').format('YYYY, dddd, MMMM D '));
-
-// MVC is a design pattern stands for modules, view, controller
+import { renderPaymentSummary } from './paymentSummary.js';
+import { renderCheckoutHeader } from './checkoutHeader.js';
 
 export function renderOrderSummary() {
     let cartItemContainerHTML = '';
@@ -18,7 +15,7 @@ export function renderOrderSummary() {
         cartItemContainerHTML += `
             <div class="cart-item-container js-cart-item-container-${matchingProduct.id}">
                 <div class="delivery-date">
-                Delivery date: ${generateDateString(deliveryOption)}
+                Delivery date: ${deliveryOptionModule.calculateDeliveryDate(deliveryOption)}
                 </div>
 
                 <div class="cart-item-details-grid">
@@ -40,7 +37,7 @@ export function renderOrderSummary() {
                                     data-product-id ="${matchingProduct.id}">
                             Update 
                         </span>
-                        <input class="quantity-input js-quantity-input-${matchingProduct.id}" type="text">
+                        <input class="quantity-input js-quantity-input-${matchingProduct.id}" type="number">
                         <span class="save-quantity-link link-primary js-save-quantity-link"
                                     data-product-id ="${matchingProduct.id}">Save</span>
                         <span class="delete-quantity-link link-primary js-delete-link"
@@ -59,16 +56,21 @@ export function renderOrderSummary() {
                 </div>
             </div>`;
     });
-    document.querySelector('.js-order-summary').innerHTML = cartItemContainerHTML;
 
-    cartModule.updateCartQuantity('js-return-to-home-link','items');
+    document.querySelector('.js-order-summary').innerHTML = cartItemContainerHTML;
+    renderCheckoutHeader();
 
     // delete item from cart
     document.querySelectorAll('.js-delete-link').forEach((link) => {
         link.addEventListener('click', () => {
             const productId = link.dataset.productId;
             cartModule.removeCartItem(productId);
-            document.querySelector(`.js-cart-item-container-${productId}`).remove();
+            // document.querySelector(`.js-cart-item-container-${productId}`).remove();
+            // render again order summary   
+            renderOrderSummary();
+            // render again payment summary and checkout header
+            renderPaymentSummary();
+            renderCheckoutHeader();
         })
     
     })
@@ -86,6 +88,9 @@ export function renderOrderSummary() {
                         cartModule.updateQuantity(productId,newQuantity);
                         document.querySelector(`.js-quantity-input-${productId}`).value = '';
                         document.querySelector(`.js-cart-item-container-${productId}`).classList.remove('is-editing-quantity');
+                        // render again payment summary and checkout header
+                        renderPaymentSummary();
+                        renderCheckoutHeader();
                     }
                 }
             })
@@ -101,6 +106,9 @@ export function renderOrderSummary() {
             if (newQuantity >= 0 && newQuantity < 1000){
                 cartModule.updateQuantity(productId,newQuantity);
                 document.querySelector(`.js-quantity-input-${productId}`).value = '';
+                // render again payment summary and checkout header
+                renderPaymentSummary();
+                renderCheckoutHeader();
             }
         })
     })
@@ -109,7 +117,7 @@ export function renderOrderSummary() {
     function generateDateString(deliveryOption) {
         const today = dayjs();
         const deliveryDate = today.add(deliveryOption.deliveryDays,'days');
-        return deliveryDate.format('dddd, MMMM D');
+        return deliveryDate.format('dddd, MMMM D, YY');
     }
 
     // generate deliveryOptions HTML
@@ -132,7 +140,7 @@ export function renderOrderSummary() {
                     name="delivery-option-${matchingProduct.id}">
                     <div>
                         <div class="delivery-option-date">
-                        ${generateDateString(deliveryOption)}
+                        ${deliveryOptionModule.calculateDeliveryDate(deliveryOption)}
                         </div>
                         <div class="delivery-option-price">
                         ${priceString} Shipping
@@ -151,6 +159,8 @@ export function renderOrderSummary() {
 
             // update page after update delivery option
             renderOrderSummary();
+            // render again payment summary
+            renderPaymentSummary();
         })
     })
 }

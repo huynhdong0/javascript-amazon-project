@@ -60,7 +60,7 @@ document.querySelector('.js-product-grid').innerHTML = productHTML;
 
 
 // load cart quantity
-cartModule.updateCartQuantity('js-cart-quantity','');
+cartModule.calculateCartQuantity();
 
 
 // make interactive when u click on buton add to cart
@@ -69,7 +69,7 @@ document.querySelectorAll('.js-add-to-cart').forEach( (button) => {
     // get productId of each product for interaction
     const productId = button.dataset.productId;
     cartModule.addToCart(productId);
-    cartModule.updateCartQuantity('js-cart-quantity','');
+    cartModule.calculateCartQuantity();
     cartModule.controlTimeOut(productId);
   })
 });

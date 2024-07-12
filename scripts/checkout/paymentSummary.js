@@ -23,7 +23,7 @@ export function renderPaymentSummary(){
 
         <div class="payment-summary-row">
             <div>
-            Items (3):
+            Items (${cartModule.getTotalItems()}):
             </div>
             <div class="payment-summary-money">
             $${UtilityModule.formatCurrency(productPriceCents)}
