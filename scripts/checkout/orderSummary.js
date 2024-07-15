@@ -27,7 +27,7 @@ export function renderOrderSummary() {
                         ${matchingProduct.name}
                         </div>
                         <div class="product-price">
-                        $${utilityModule.formatCurrency(matchingProduct.priceCents)}
+                        ${matchingProduct.getPrice()}
                         </div>
                         <div class="product-quantity">
                         <span>
@@ -37,7 +37,7 @@ export function renderOrderSummary() {
                                     data-product-id ="${matchingProduct.id}">
                             Update 
                         </span>
-                        <input class="quantity-input js-quantity-input-${matchingProduct.id}" type="number">
+                        <input class="quantity-input js-quantity-input-${matchingProduct.id}" type="number" value="${cartItem.quantity}">
                         <span class="save-quantity-link link-primary js-save-quantity-link"
                                     data-product-id ="${matchingProduct.id}">Save</span>
                         <span class="delete-quantity-link link-primary js-delete-link"
@@ -91,6 +91,7 @@ export function renderOrderSummary() {
                         // render again payment summary and checkout header
                         renderPaymentSummary();
                         renderCheckoutHeader();
+                        renderOrderSummary();
                     }
                 }
             })
@@ -105,10 +106,10 @@ export function renderOrderSummary() {
             const newQuantity = Number(document.querySelector(`.js-quantity-input-${productId}`).value);
             if (newQuantity >= 0 && newQuantity < 1000){
                 cartModule.updateQuantity(productId,newQuantity);
-                document.querySelector(`.js-quantity-input-${productId}`).value = '';
                 // render again payment summary and checkout header
                 renderPaymentSummary();
                 renderCheckoutHeader();
+                renderOrderSummary();
             }
         })
     })
